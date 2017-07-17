@@ -33,10 +33,9 @@ public class BaseManger : MonoBehaviour
 
     //挑和夹。只会触发一个
     //不管胜几个棋子。只要没路走就算输。测试
-    //有时候会出现奇怪的吃法
 
 
-    //出现还剩两个棋子但是没路走了怎么办
+    //出现还剩多个棋子但是没路走了怎么办
     //缺少介绍的4个按钮动画和结束输赢的动画
     //人人对战输赢结束场景
     //人机对战  电脑赢了出现什么场景 
@@ -81,7 +80,6 @@ public class BaseManger : MonoBehaviour
     {
         CurrentBase.transform.position = Input.mousePosition;
         isCurrent = true;
-
         CurrentBase.PutDownChess(b,true,true);
         CurrentBase.gameObject.SetActive(true);
     }
@@ -90,7 +88,6 @@ public class BaseManger : MonoBehaviour
     /// 隐藏点中棋子
     /// </summary>
     /// <returns></returns>
-    /// 
     public Base CloseCurrent(bool back=false)
     {
         isCurrent = false;
@@ -179,6 +176,7 @@ public class BaseManger : MonoBehaviour
                 baseArr[i, j] = b;
                 b.x = i;
                 b.y = j;
+                b.Ps = PlayerState.None;
                 InitBack += b.InitList;
 
                 g.name = i + "-" + j;
@@ -199,6 +197,15 @@ public class BaseManger : MonoBehaviour
             baseArr[i, 4].PutDownChess(Red, PlayerState.Red);
             RedList.Add(baseArr[i, 4]);
         }
+        baseArr[0, 1].PutDownChess(Black, PlayerState.Black);
+        BlackList.Add(baseArr[0, 1]);
+        baseArr[4, 1].PutDownChess(Black, PlayerState.Black);
+        BlackList.Add(baseArr[4, 1]);
+        baseArr[0, 3].PutDownChess(Red, PlayerState.Red);
+        RedList.Add(baseArr[0, 3]);
+        baseArr[4, 3].PutDownChess(Red, PlayerState.Red);
+        RedList.Add(baseArr[4, 3]);
+
     }
 
     /// <summary>
@@ -457,13 +464,14 @@ public class BaseManger : MonoBehaviour
     /// <param name="b"></param>
     public void EatChess(Base b)
     {
-        if (!WinOrLose())
+        OnePickTwo(b);//一挑二
+        TwoClipOne(b);//二夹一
+        ToEat();
+        if (!WinOrLose02() || !WinOrLose())
         {
             Debug.Log("有一方不能走了");
             return;
         }
-        OnePickTwo(b);//一挑二
-        TwoClipOne(b);//二夹一
     }
 
     /// <summary>
@@ -472,10 +480,6 @@ public class BaseManger : MonoBehaviour
     /// <param name="b"></param>
     void TwoClipOne(Base b)
     {
-        if (allowEat(b))
-        {
-            return;
-        }
         //周围距离1格的棋子
         List<Base> AroundChess = aroundOneChess(b);
         //跟可以走的路径的做对比
@@ -496,13 +500,9 @@ public class BaseManger : MonoBehaviour
                 if (temp.Ps != b.Ps && !temp.isDropedChess)
                 {
                     //说明吃掉了
-                    //TODO 修改
-                    if (RedList.Count==2||BlackList.Count==2)
-                    {
-                        temp.PutDownChess(b, true);
-                        return;
-                    }
-                    temp.PutDownChess(b, true);
+                    //TODO 把中间棋子吃掉
+                    Debug.Log(temp + "挑吃");
+                    temp.BeEat();
                 }
             }
         }
@@ -514,10 +514,6 @@ public class BaseManger : MonoBehaviour
     /// <param name="b"></param>
     void OnePickTwo(Base b)
     {
-        if (allowEat(b))
-        {
-            return;
-        }
         List<Base> aroundList = aroundZeroBaseList(b);
         List<Base> samePathList = GetSamePathList(b, aroundList);
         while (samePathList.Count > 0)
@@ -539,19 +535,42 @@ public class BaseManger : MonoBehaviour
             }
             else if (temp01.Ps == temp02.Ps && !temp01.isDropedChess && !temp02.isDropedChess)
             {
+                Debug.Log(temp01 + "卡吃");
                 samePathList.Remove(temp01);
                 samePathList.Remove(temp02);
-                temp01.PutDownChess(b, true);
+                temp01.BeEat();
+                temp02.BeEat();
                 //TODO 修改 莫名的好了 (之前问题。一方只剩一个的话。如果挑吃的话。只会挑一个)
-                //之前     RedList.Count > 2 && BlackList.Count > 2
-                if (RedList.Count >= 2 && BlackList.Count >= 2)
-                {
-                    temp02.PutDownChess(b, true);
-                }
                 continue;
             }
             samePathList.Remove(temp01);
             samePathList.Remove(temp02);
+        }
+    }
+
+    /// <summary>
+    /// 打吃  同一条线上两颗相邻的相同颜色的棋子。可以吃在他俩同一条线上的其他棋子;
+    /// </summary>
+    void ToEat()
+    {
+        List<Base> AroundSameBase = new List<Base>();
+        //遍历周围紧贴的格子。并且是相同路径的
+        foreach (var item in GetSamePathList(EndBase, aroundZeroBaseList(EndBase)))
+        {
+            //如果这个格子跟方子的格子ps一样。加入LIST
+            if (item.Ps==EndBase.Ps)
+            {
+                AroundSameBase.Add(item);
+            }
+        }
+        foreach (var item in AroundSameBase)
+        {
+            List<Base> lb = GetLineBase(EndBase, item);
+            foreach (var tempBase in lb)
+            {
+                Debug.Log(tempBase + "打吃");
+                tempBase.BeEat();
+            }
         }
     }
 
@@ -569,15 +588,17 @@ public class BaseManger : MonoBehaviour
             if (ps == PlayerState.Red)//电脑输了 黑色输了
             {
                 Debug.Log("红色赢了");
+                PlayPanel.Instance.ChangsPromptText("红色赢了");
             }
             else
             {
                 Debug.Log("黑色赢了");
+                PlayPanel.Instance.ChangsPromptText("黑色赢了");
             }
         }
         else
         {   //人机对战
-            if (ps==PlayerState.Red)//电脑输了 黑色输了
+            if (ps==PlayerState.Red)//电脑输了 黑色输了 跳转最后界面
             {
                 EndGame();
                 PlayPanel.Instance.Close();
@@ -612,7 +633,7 @@ public class BaseManger : MonoBehaviour
                 }
             }
             //说明黑色的无路可走了
-            PlayPanel.Instance.ChangsPromptText("红色赢了");
+            
             ShowWin(PlayerState.Red);
             return false;
         }
@@ -630,12 +651,30 @@ public class BaseManger : MonoBehaviour
                 }
             }
             //说明红色的无路可走了
-            PlayPanel.Instance.ChangsPromptText("黑色赢了");
             ShowWin(PlayerState.Black);
             return false;
         }
         Debug.Log("出大问题了");
         return false;
+    }
+
+    /// <summary>
+    /// 第二种输赢判断     看双方是否还剩棋子
+    /// </summary>
+    /// <returns></returns>
+    bool WinOrLose02()
+    {
+        if (RedList.Count==0)
+        {
+            ShowWin(PlayerState.Black);
+            return false;
+        }
+        else if (BlackList.Count==0)
+        {
+            ShowWin(PlayerState.Red);
+            return false;
+        }
+        return true;
     }
 
     #endregion
@@ -830,22 +869,37 @@ public class BaseManger : MonoBehaviour
     }
 
     /// <summary>
-    /// 判断该不该继续吃。根据列表里的格子种类数量
+    /// 返回根据在两点确定的同一条线上的另外两个格子
     /// </summary>
-    /// <param name="b"></param>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
     /// <returns></returns>
-    bool allowEat(Base b)
+    List<Base> GetLineBase(Base start,Base end)
     {
-        if (RedList.Count<=1&& b.Ps==PlayerState.Black)
+        int tempx = start.x - end.x;
+        int tempy = start.y - end.y;
+        int x1 = start.x + tempx;
+        int y1 = start.y + tempy;
+        int x2 = end.x - tempx;
+        int y2 = end.y - tempy;
+        List<Base> lb = new List<Base>();
+        if (x1 >= 0 && x1 < 5 && y1 >= 0 && y1 < 7) 
         {
-            return true;
+            if (baseArr[x1, y1].Ps != start.Ps&& baseArr[x1, y1].Ps !=PlayerState.None)
+            {
+                lb.Add(baseArr[x1, y1]);
+            }
         }
-        else if (BlackList.Count <= 1 && b.Ps == PlayerState.Red)
+        if (x2 >= 0 && x2 < 5 && y2 >= 0 && y2 < 7)
         {
-            return true;
+            if (baseArr[x2, y2].Ps != start.Ps && baseArr[x2, y2].Ps != PlayerState.None)
+            {
+                lb.Add(baseArr[x2, y2]);
+            }
         }
-        return false;
+        return lb;
     }
+
 
 
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
+using System.Collections;
 
 public enum PlayerState
 {
@@ -75,11 +76,9 @@ public class Base : MonoBehaviour ,IPointerClickHandler{
         _image.color = Color.white;
         _image.sprite = b._image.sprite;
         isDropedChess = false;
-
-        BaseManger.Instance.GetPlayerBaseList(Ps).Remove(this);
         Ps = b.Ps;
-        //gameObject.name == "Current" ||
-
+        //TODO
+        b.Ps = PlayerState.None;
         if (current)
         {
             return;
@@ -90,7 +89,6 @@ public class Base : MonoBehaviour ,IPointerClickHandler{
             return;
         }
         BaseManger.Instance.EatChess(this);
-
     }
 
     /// <summary>
@@ -113,11 +111,17 @@ public class Base : MonoBehaviour ,IPointerClickHandler{
     public Base TakeUpChess()
     {
         isDropedChess = true;
-        //_image.enabled = false;
         _image.color = c;
-
         BaseManger.Instance.GetPlayerBaseList(Ps).Remove(this);
         return this;
+    }
+
+    public void BeEat()
+    {
+        _image.color = c;
+        BaseManger.Instance.GetPlayerBaseList(Ps).Remove(this);
+        isDropedChess = true;
+        Ps = PlayerState.None;
     }
 
     public void OnPointerClick(PointerEventData eventData)
