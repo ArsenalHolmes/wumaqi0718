@@ -464,9 +464,9 @@ public class BaseManger : MonoBehaviour
     /// <param name="b"></param>
     public void EatChess(Base b)
     {
-        OnePickTwo(b);//一挑二
-        TwoClipOne(b);//二夹一
-        ToEat();
+        ToEatBase(OnePickTwo(b));//一挑二
+        ToEatBase(TwoClipOne(b));//二夹一
+        ToEatBase(dachi(b));//打吃
         if (!WinOrLose02() || !WinOrLose())
         {
             Debug.Log("有一方不能走了");
@@ -478,7 +478,7 @@ public class BaseManger : MonoBehaviour
     /// 二夹一
     /// </summary>
     /// <param name="b"></param>
-    void TwoClipOne(Base b)
+     List<Base> TwoClipOne(Base b)
     {
         //周围距离1格的棋子
         List<Base> AroundChess = aroundZeroBaseList(b,2);
@@ -486,6 +486,7 @@ public class BaseManger : MonoBehaviour
         //相同路径的棋子切距离1格
         List<Base> SamePathChess = GetSamePathList(b, AroundChess);//跟可走路径相同的格子
 
+        List<Base> lb = new List<Base>();
         //如果有棋子而且类型一样。找找俩中间是否有棋子
         for (int i = 0; i < SamePathChess.Count; i++)
         {
@@ -495,26 +496,28 @@ public class BaseManger : MonoBehaviour
                 Base temp = GetBaseAroundByAtoB(b, item);
                 if (temp==null)
                 {
-                    return;
+                    return null;
                 }
                 if (temp.Ps != b.Ps && !temp.isDropedChess)
                 {
                     //说明吃掉了
                     Debug.Log(temp + "挑吃");
-                    temp.BeEat();
+                    lb.Add(temp);
                 }
             }
         }
+        return lb;
     }
 
     /// <summary>
     /// 一挑二
     /// </summary>
     /// <param name="b"></param>
-    void OnePickTwo(Base b)
+     List<Base> OnePickTwo(Base b)
     {
         List<Base> aroundList = aroundZeroBaseList(b);
         List<Base> samePathList = GetSamePathList(b, aroundList);
+        List<Base> lb = new List<Base>();
         while (samePathList.Count > 0)
         {
             Base temp01 = samePathList[0];
@@ -539,26 +542,26 @@ public class BaseManger : MonoBehaviour
             }
             else if (temp01.Ps == temp02.Ps && !temp01.isDropedChess && !temp02.isDropedChess)
             {
-                Debug.Log(temp01 + "卡吃");
                 samePathList.Remove(temp01);
                 samePathList.Remove(temp02);
-                temp01.BeEat();
-                temp02.BeEat();
+                lb.Add(temp01);
+                lb.Add(temp02);
                 continue;
             }
             samePathList.Remove(temp01);
             samePathList.Remove(temp02);
         }
+        return lb;
     }
 
     /// <summary>
     /// 打吃  同一条线上两颗相邻的相同颜色的棋子。可以吃在他俩同一条线上的其他棋子;
     /// </summary>
-    void ToEat()
+     List<Base> dachi(Base b)
     {
         List<Base> AroundSameBase = new List<Base>();
         //遍历周围紧贴的格子。并且是相同路径的
-        foreach (var item in GetSamePathList(EndBase, aroundZeroBaseList(EndBase)))
+        foreach (var item in GetSamePathList(b, aroundZeroBaseList(b)))
         {
             //如果这个格子跟方子的格子ps一样。加入LIST
             if (item.Ps==EndBase.Ps)
@@ -566,14 +569,23 @@ public class BaseManger : MonoBehaviour
                 AroundSameBase.Add(item);
             }
         }
+        List<Base> lbs = new List<Base>();
         foreach (var item in AroundSameBase)
         {
-            List<Base> lb = GetLineBase(EndBase, item);
+            List<Base> lb = GetLineBase(b, item);
             foreach (var tempBase in lb)
             {
-                Debug.Log(tempBase + "打吃");
-                tempBase.BeEat();
+                lbs.Add(tempBase);
             }
+        }
+        return lbs;
+    }
+
+    void ToEatBase(List<Base> lb)
+    {
+        foreach (var item in lb)
+        {
+            item.BeEat();
         }
     }
 
@@ -901,6 +913,12 @@ public class BaseManger : MonoBehaviour
             }
         }
         return lb;
+    }
+
+    public int GetNum(Base b)
+    {
+        int num = OnePickTwo(b).Count + TwoClipOne(b).Count + dachi(b).Count;
+        return num;
     }
 
 

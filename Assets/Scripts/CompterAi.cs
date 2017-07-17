@@ -14,7 +14,7 @@ public class CompterAi : MonoBehaviour
     }
     public void AIPlayChess()
     {
-        List<MoveBase> MBL =new List<MoveBase>();
+        List<MoveBase> MBL = new List<MoveBase>();
         //Base TempBase=null;
         //Base StartBase=null;
         foreach (var b in BaseManger.Instance.BlackList)
@@ -24,25 +24,32 @@ public class CompterAi : MonoBehaviour
             {
                 if (item.isDropedChess)
                 {
-                    //Debug.Log(BaseManger.Instance.AroundRedBase(item).Count);
-                    MoveBase mb = new MoveBase(b, item, BaseManger.Instance.AroundRedBase(item).Count);
+                    int count = BaseManger.Instance.GetNum(item);
+                    //MoveBase mb = new MoveBase(b, item, BaseManger.Instance.AroundRedBase(item).Count);
+                    MoveBase mb = new MoveBase(b, item, count);//TODO 打不过电脑的模式
                     MBL.Add(mb);
                 }
             }
         }
-        MBL = Sort(MBL);
+        MBL = Sort(MBL);//排序
+        MBL = GetMaxNumList(MBL);//得到最大值得列表
         MoveBase mbTemp = MBL[0];
-        for (int i = 0; i < MBL.Count; i++)
+        while (true)
         {
-            mbTemp = MBL[i];
+            int index = Random.Range(0, MBL.Count);
+            Debug.Log(index + "   " + MBL.Count);
+            mbTemp = MBL[index];
             if (mbTemp.CanMove())
             {
                 break;
             }
+            else
+            {
+                MBL.Remove(mbTemp);
+            }
         }
         AIBase = mbTemp.Start.TakeUpChess();//拿起
         mbTemp.End.PutDownChess(AIBase);//放下
-        //BaseManger.Instance.CurrentBase.Ps = AIBase.Ps;
         BaseManger.Instance.ChangsPlayer();
     }
 
@@ -62,6 +69,15 @@ public class CompterAi : MonoBehaviour
             }
         }
         return lmb;
+    }
+    List<MoveBase> GetMaxNumList(List<MoveBase> lmb)
+    {
+        List<MoveBase> lb = new List<MoveBase>();
+        for (int i = 0; i < 2; i++)
+        {
+            lb.Add(lmb[i]);
+        }
+        return lb;
     }
 }
 public class MoveBase 
