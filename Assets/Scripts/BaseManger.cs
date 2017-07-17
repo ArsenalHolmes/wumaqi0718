@@ -31,7 +31,6 @@ public class BaseManger : MonoBehaviour
 
     //TODO 注意点  
 
-    //挑和夹。只会触发一个
     //不管胜几个棋子。只要没路走就算输。测试
 
 
@@ -103,6 +102,10 @@ public class BaseManger : MonoBehaviour
     }
     #endregion
 
+    /// <summary>
+    /// 实现AI的移动
+    /// </summary>
+    /// <returns></returns>
     IEnumerator Aplay()
     {
         yield return new WaitForSeconds(0.35f);
@@ -474,7 +477,6 @@ public class BaseManger : MonoBehaviour
         ToEatBase(dachi(b));//打吃
         if (!WinOrLose02() || !WinOrLose())
         {
-            Debug.Log("有一方不能走了");
             return;
         }
     }
@@ -506,7 +508,6 @@ public class BaseManger : MonoBehaviour
                 if (temp.Ps != b.Ps && !temp.isDropedChess)
                 {
                     //说明吃掉了
-                    Debug.Log(temp + "挑吃");
                     lb.Add(temp);
                 }
             }
@@ -586,6 +587,10 @@ public class BaseManger : MonoBehaviour
         return lbs;
     }
 
+    /// <summary>
+    /// 实现列表中的格子被吃掉
+    /// </summary>
+    /// <param name="lb"></param>
     void ToEatBase(List<Base> lb)
     {
         foreach (var item in lb)
@@ -594,7 +599,7 @@ public class BaseManger : MonoBehaviour
         }
     }
 
-    #region 输赢显示判断  
+    #region 输赢显示和判断  
 
     /// <summary>
     /// 展示输赢
@@ -653,7 +658,6 @@ public class BaseManger : MonoBehaviour
                 }
             }
             //说明黑色的无路可走了
-            
             ShowWin(PlayerState.Red);
             return false;
         }
@@ -920,6 +924,11 @@ public class BaseManger : MonoBehaviour
         return lb;
     }
 
+    /// <summary>
+    /// 得到指定格子可以吃其他格子的数量
+    /// </summary>
+    /// <param name="b"></param>
+    /// <returns></returns>
     public int GetNum(Base b)
     {
         int num = OnePickTwo(b).Count + TwoClipOne(b).Count + dachi(b).Count;

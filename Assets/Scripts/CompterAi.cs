@@ -42,7 +42,6 @@ public class CompterAi : MonoBehaviour
         while (true)
         {
             int index = Random.Range(0, MBL.Count);
-            Debug.Log(index + "   " + MBL.Count);
             mbTemp = MBL[index];
             if (mbTemp.Canmove)
             {
