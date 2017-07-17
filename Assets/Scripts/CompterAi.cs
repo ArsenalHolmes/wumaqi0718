@@ -14,12 +14,47 @@ public class CompterAi : MonoBehaviour
     }
     public void AIPlayChess()
     {
+        //TODO 当玩家棋子只剩一个的时候。会弱智
+        List<MoveBase> MBL = GetBaseCanMoveList();
+        MBL = Sort(MBL);//根据NUM排序  NUM是走的那里可以吃的格子的数量
+        MoveBase mbTemp;
+        if (BaseManger.Instance.RedList.Count==1)
+        {
+            Debug.Log("红色就剩一个了");
+            mbTemp = GetMovePath(BaseManger.Instance.RedList[0], MBL);
+        }
+        else
+        {
+            MBL = GetMaxNumList(MBL);//得到最大值得列表
+            foreach (var item in MBL)
+            {
+                Debug.Log(item.ToString());
+            }
+            if (MBL.Count == 0)
+            {
+                Debug.Log("出大问题了AI没路可以走了");
+                return;
+            }
+            
+            int index = Random.Range(0, MBL.Count);
+            mbTemp = MBL[index];
+        }
+        BaseManger.Instance.StartBase = mbTemp.Start;
+        BaseManger.Instance.EndBase = mbTemp.End;
+        AIBase = mbTemp.Start.TakeUpChess();//拿起
+        mbTemp.End.PutDownChess(AIBase);//放下
+        BaseManger.Instance.ChangsPlayer();//换人走
+    }
+
+    /// <summary>
+    /// 得到黑色格子所有可以走的路径
+    /// </summary>
+    /// <returns></returns>
+    List<MoveBase> GetBaseCanMoveList()
+    {
         List<MoveBase> MBL = new List<MoveBase>();
-        //Base TempBase=null;
-        //Base StartBase=null;
         foreach (var b in BaseManger.Instance.BlackList)
         {
-            int index = Random.Range(0, BaseManger.Instance.BlackList.Count);
             foreach (var item in b.aroundBaseList)
             {
                 if (item.isDropedChess)
@@ -27,37 +62,17 @@ public class CompterAi : MonoBehaviour
                     int count = BaseManger.Instance.GetNum(item);
                     //MoveBase mb = new MoveBase(b, item, BaseManger.Instance.AroundRedBase(item).Count);
                     MoveBase mb = new MoveBase(b, item, count);
-                    MBL.Add(mb);
+                    if (mb.Canmove)
+                    {
+                        MBL.Add(mb);
+                    }
+                    
                 }
             }
         }
-        MBL = Sort(MBL);//排序
-        MBL = GetMaxNumList(MBL);//得到最大值得列表
-        if (MBL.Count==0)
-        {
-            Debug.Log("出大问题了AI没路可以走了");
-            return;
-        }
-        MoveBase mbTemp = MBL[0];
-        while (true)
-        {
-            int index = Random.Range(0, MBL.Count);
-            mbTemp = MBL[index];
-            if (mbTemp.Canmove)
-            {
-                break;
-            }
-            else
-            {
-                MBL.Remove(mbTemp);
-            }
-        }
-        BaseManger.Instance.StartBase = mbTemp.Start;
-        BaseManger.Instance.EndBase = mbTemp.End;
-        AIBase = mbTemp.Start.TakeUpChess();//拿起
-        mbTemp.End.PutDownChess(AIBase);//放下
-        BaseManger.Instance.ChangsPlayer();
+        return MBL;
     }
+
     /// <summary>
     /// 列表根据NUM排序
     /// </summary>
@@ -102,6 +117,21 @@ public class CompterAi : MonoBehaviour
         }
         return lb;
     }
+
+    MoveBase GetMovePath(Base b , List<MoveBase> lmb)
+    {
+        foreach (var item in lmb)
+        {
+            if (b.aroundBaseList.Contains(item.End))
+            {
+                return item;
+            }
+        }
+        Debug.Log("没找到");
+        return null;
+    }
+
+
 }
 public class MoveBase 
 {
@@ -162,5 +192,9 @@ public class MoveBase
         {
             return BaseManger.Instance.ChessMove(start, end);
         }
+    }
+    public override string ToString()
+    {
+        return (start + "  " + end + " " + num);
     }
 }

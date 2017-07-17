@@ -375,6 +375,7 @@ public class BaseManger : MonoBehaviour
         ToEatBase(dachi(b));//打吃
         if (!WinOrLose02() || !WinOrLose())
         {
+            
             return;
         }
     }
@@ -497,7 +498,7 @@ public class BaseManger : MonoBehaviour
         }
     }
     #endregion
-
+    
     #region 输赢显示和判断  
     /// <summary>
     /// 展示输赢

@@ -74,6 +74,7 @@ public class Base : MonoBehaviour ,IPointerClickHandler{
     /// <param name="back">用来区别是否是退回-退回true正常下false</param>
     public void PutDownChess(Base b,bool back=false,bool current=false)
     {
+        
         _image.color = Color.white;
         _image.sprite = b._image.sprite;
         isDropedChess = false;
