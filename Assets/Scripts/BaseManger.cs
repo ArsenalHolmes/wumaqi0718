@@ -9,12 +9,10 @@ public class BaseManger : MonoBehaviour
     #region 一些属性
     public Base CurrentBase;//选中的棋子
 
-    Sprite Black;
-    Sprite Red;
     GameObject BasePre;
 
     public static BaseManger Instance;
-
+    
     public bool isCurrent;
     public Base[,] baseArr;
     Action InitBack;
@@ -33,20 +31,17 @@ public class BaseManger : MonoBehaviour
 
     //不管胜几个棋子。只要没路走就算输。测试
 
-
     //出现还剩多个棋子但是没路走了怎么办
     //缺少介绍的4个按钮动画和结束输赢的动画
     //人人对战输赢结束场景
     //人机对战  电脑赢了出现什么场景 
-    //挑和夹得触发条件不明确。先后顺序
+    //挑夹吃  触发的技术
 
     private void Awake()
     {
         Instance = this;
 
         BasePre = Resources.Load<GameObject>("Base");
-        Red = Resources.Load<Sprite>("Image/红棋子");
-        Black = Resources.Load<Sprite>("Image/黑棋子");
 
         CurrentBase = GameObject.Find("Canvas/Current").GetComponent<Base>();
     }
@@ -54,10 +49,12 @@ public class BaseManger : MonoBehaviour
     {
 
     }
+
     void Update()
     {
         CurrentMove();
     }
+
     #region 选中棋子的跟随。显示。隐藏
 
     /// <summary>
@@ -100,7 +97,6 @@ public class BaseManger : MonoBehaviour
 
         return CurrentBase;
     }
-    #endregion
 
     /// <summary>
     /// 实现AI的移动
@@ -114,6 +110,10 @@ public class BaseManger : MonoBehaviour
             AIPlay();
         }
     }
+
+    #endregion
+
+    #region 一些初始化
 
     /// <summary>
     /// 开始游戏初始化
@@ -193,6 +193,9 @@ public class BaseManger : MonoBehaviour
     /// </summary>
     void InitPlayerChess()
     {
+
+        Sprite Black = Resources.Load<Sprite>("Image/黑棋子");
+        Sprite Red = Resources.Load<Sprite>("Image/红棋子");
         for (int i = 0; i < 5; i++)
         {
             baseArr[i, 0].PutDownChess(Black, PlayerState.Black);
@@ -211,115 +214,7 @@ public class BaseManger : MonoBehaviour
 
     }
 
-    /// <summary>
-    /// 周围竖向和横向的格子--不限制距离
-    /// </summary>
-    /// <param name="b"></param>
-    /// <returns></returns>
-    public List<Base> aroundLineBase(Base b)
-    {
-        List<Base> Lb = new List<Base>();
-        for (int i = -4; i <= 4; i++)
-        {
-            int x = b.x + i;
-            if ((x >= 5 || x < 0))
-            {
-                continue;
-            }
-            for (int j = -6; j <= 6; j++)
-            {
-                int y = b.y + j;
-                if (y >= 7 || y < 0 || Mathf.Abs(i) == Mathf.Abs(j))
-                {
-                    continue;
-                }
-                if ((i != 0 && j != 0))
-                {
-                    continue;
-                }
-                if (baseArr[x, y].canChess)
-                {
-                    Lb.Add(baseArr[x, y]);
-                }
-                
-            }
-        }
-        return Lb;
-    }
-
-    /// <summary>
-    /// 获得周围周围格子--不限制距离
-    /// </summary>
-    /// <param name="b"></param>
-    /// <returns></returns>
-    public List<Base> aroundBase(Base b)
-    {
-        List<Base> Lb = new List<Base>();
-        for (int i = -4; i <= 4; i++)
-        {
-            int x = b.x + i;
-            if ((x >= 5 || x < 0))
-            {
-                continue;
-            }
-            for (int j = -6; j <= 6; j++)
-            {
-                if ((Mathf.Abs(i) == Mathf.Abs(j) || i == 0 || j == 0) && !(i == 0 && j == 0))
-                {
-                    int y = b.y + j;
-                    if (y >= 7 || y < 0)
-                    {
-                        continue;
-                    }
-                    if (baseArr[x, y].canChess)
-                    {
-                        Lb.Add(baseArr[x, y]);
-                    }
-                }
-
-            }
-        }
-        return Lb;
-    }
-
-    /// <summary>
-    /// 得到特定点的可移动的base
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <returns></returns>
-    public List<Base> GetAppointBase(int x,int y)
-    {
-        List<Base> Lb = new List<Base>();
-        if (x==1&&y==5)
-        {
-            Lb.Add(baseArr[2, 4]);
-            Lb.Add(baseArr[2, 5]);
-            Lb.Add(baseArr[2, 6]);
-            Lb.Add(baseArr[3, 5]);
-            Lb.Add(baseArr[3, 3]);
-            Lb.Add(baseArr[4, 2]);
-        }
-        else if (x == 3 && y == 5)
-        {
-            Lb.Add(baseArr[2, 4]);
-            Lb.Add(baseArr[2, 5]);
-            Lb.Add(baseArr[2, 6]);
-            Lb.Add(baseArr[1, 5]);
-            Lb.Add(baseArr[1, 3]);
-            Lb.Add(baseArr[0, 2]);
-        }
-        else if (x == 2 && y == 6)
-        {
-            for (int i = 0; i < 7; i++)
-            {
-                Lb.Add(baseArr[2, i]);
-            }
-            Lb.Add(baseArr[1, 5]);
-            Lb.Add(baseArr[3, 5]);
-        }
-        return Lb;
-    }
+    #endregion
 
     #region 判断两点中是否有障碍物和棋子是否符合移动的条件
     /// <summary>
@@ -466,6 +361,8 @@ public class BaseManger : MonoBehaviour
         StartBase.PutDownChess(CloseCurrent(), true);
     }
 
+    #region 吃棋子的判断和实现
+
     /// <summary>
     /// 吃棋子 传入落子的base
     /// </summary>
@@ -598,9 +495,9 @@ public class BaseManger : MonoBehaviour
             item.BeEat();
         }
     }
+    #endregion
 
     #region 输赢显示和判断  
-
     /// <summary>
     /// 展示输赢
     /// </summary>
@@ -700,15 +597,126 @@ public class BaseManger : MonoBehaviour
         }
         return true;
     }
-
     #endregion
+
+    #region 获得特定格子的方法
+
+    /// <summary>
+    /// 周围竖向和横向的格子--不限制距离
+    /// </summary>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public List<Base> aroundLineBase(Base b)
+    {
+        List<Base> Lb = new List<Base>();
+        for (int i = -4; i <= 4; i++)
+        {
+            int x = b.x + i;
+            if ((x >= 5 || x < 0))
+            {
+                continue;
+            }
+            for (int j = -6; j <= 6; j++)
+            {
+                int y = b.y + j;
+                if (y >= 7 || y < 0 || Mathf.Abs(i) == Mathf.Abs(j))
+                {
+                    continue;
+                }
+                if ((i != 0 && j != 0))
+                {
+                    continue;
+                }
+                if (baseArr[x, y].canChess)
+                {
+                    Lb.Add(baseArr[x, y]);
+                }
+
+            }
+        }
+        return Lb;
+    }
+
+    /// <summary>
+    /// 获得周围周围格子--不限制距离
+    /// </summary>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public List<Base> aroundBase(Base b)
+    {
+        List<Base> Lb = new List<Base>();
+        for (int i = -4; i <= 4; i++)
+        {
+            int x = b.x + i;
+            if ((x >= 5 || x < 0))
+            {
+                continue;
+            }
+            for (int j = -6; j <= 6; j++)
+            {
+                if ((Mathf.Abs(i) == Mathf.Abs(j) || i == 0 || j == 0) && !(i == 0 && j == 0))
+                {
+                    int y = b.y + j;
+                    if (y >= 7 || y < 0)
+                    {
+                        continue;
+                    }
+                    if (baseArr[x, y].canChess)
+                    {
+                        Lb.Add(baseArr[x, y]);
+                    }
+                }
+
+            }
+        }
+        return Lb;
+    }
+
+    /// <summary>
+    /// 得到特定点的可移动的base
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public List<Base> GetAppointBase(int x, int y)
+    {
+        List<Base> Lb = new List<Base>();
+        if (x == 1 && y == 5)
+        {
+            Lb.Add(baseArr[2, 4]);
+            Lb.Add(baseArr[2, 5]);
+            Lb.Add(baseArr[2, 6]);
+            Lb.Add(baseArr[3, 5]);
+            Lb.Add(baseArr[3, 3]);
+            Lb.Add(baseArr[4, 2]);
+        }
+        else if (x == 3 && y == 5)
+        {
+            Lb.Add(baseArr[2, 4]);
+            Lb.Add(baseArr[2, 5]);
+            Lb.Add(baseArr[2, 6]);
+            Lb.Add(baseArr[1, 5]);
+            Lb.Add(baseArr[1, 3]);
+            Lb.Add(baseArr[0, 2]);
+        }
+        else if (x == 2 && y == 6)
+        {
+            for (int i = 0; i < 7; i++)
+            {
+                Lb.Add(baseArr[2, i]);
+            }
+            Lb.Add(baseArr[1, 5]);
+            Lb.Add(baseArr[3, 5]);
+        }
+        return Lb;
+    }
 
     /// <summary>
     /// 获得周围紧贴着的格子
     /// </summary>
     /// <param name="b"></param>
     /// <returns></returns>
-    public List<Base> aroundZeroBaseList(Base b,int num =1)
+    List<Base> aroundZeroBaseList(Base b,int num =1)
     {
         List<Base> Lb = new List<Base>();
         for (int i = -1*num; i <= 1 * num; i=i+1 * num)
@@ -730,35 +738,6 @@ public class BaseManger : MonoBehaviour
                     Lb.Add(baseArr[x, y]);
                 }
                 
-            }
-        }
-        return Lb;
-    }
-
-    /// <summary>
-    /// 周围距离1格的棋子   //没用了
-    /// </summary>
-    public List<Base> aroundOneChess(Base b)
-    {
-        List<Base> Lb = new List<Base>();
-        for (int i = -2; i <= 2; i = i + 2)
-        {
-            int x = b.x + i;
-            if (x >= 5 || x < 0)
-            {
-                continue;
-            }
-            for (int j = -2; j <= 2; j = j + 2)
-            {
-                int y = b.y + j;
-                if (y >= 7 || y < 0)
-                {
-                    continue;
-                }
-                if (baseArr[x, y].canChess)
-                {
-                    Lb.Add(baseArr[x, y]);
-                }
             }
         }
         return Lb;
@@ -809,7 +788,7 @@ public class BaseManger : MonoBehaviour
     /// <param name="b"></param>
     /// <param name="Lb"></param>
     /// <returns></returns>
-    public List<Base> GetSamePathList(Base b, List<Base> Lb)
+    List<Base> GetSamePathList(Base b, List<Base> Lb)
     {
         List<Base> lb = new List<Base>();
         foreach (var item in Lb)
@@ -872,27 +851,6 @@ public class BaseManger : MonoBehaviour
     }
 
     /// <summary>
-    /// 得到B点周围可走路径并且紧邻的格子中。为红色棋子的数组
-    /// </summary>
-    /// <returns></returns>
-    public List<Base> AroundRedBase(Base b)
-    {
-        List<Base> lb = new List<Base>();
-        //Debug.Log(GetSamePathList(b, aroundZeroBaseList(b)).Count);
-        //foreach (var item in GetSamePathList(b, aroundZeroBaseList(b)))
-        foreach (var item in b.aroundBaseList)
-        {
-            if (!item.isDropedChess&&item.canChess&&item.Ps==PlayerState.Red)
-            {
-                //Debug.Log("建立");
-                //这个格子、不能走。已经放了东西了。而且是红色的
-                lb.Add(item);
-            }
-        }
-        return lb;
-    }
-
-    /// <summary>
     /// 返回根据在两点确定的同一条线上的另外两个格子
     /// </summary>
     /// <param name="start"></param>
@@ -934,6 +892,8 @@ public class BaseManger : MonoBehaviour
         int num = OnePickTwo(b).Count + TwoClipOne(b).Count + dachi(b).Count;
         return num;
     }
+
+    #endregion
 
 
 
