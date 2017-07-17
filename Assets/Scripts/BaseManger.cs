@@ -597,6 +597,12 @@ public class BaseManger : MonoBehaviour
             ShowWin(PlayerState.Red);
             return false;
         }
+        else if (BlackList.Count==1&&RedList.Count==1)
+        {
+            //TODO 平局怎么算
+            ShowWin(PlayerState.Black);
+            return false;
+        }
         return true;
     }
     #endregion

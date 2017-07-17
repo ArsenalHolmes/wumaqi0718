@@ -42,7 +42,7 @@ public class CompterAi : MonoBehaviour
         BaseManger.Instance.StartBase = mbTemp.Start;
         BaseManger.Instance.EndBase = mbTemp.End;
         AIBase = mbTemp.Start.TakeUpChess();//拿起
-        mbTemp.End.PutDownChess(AIBase);//放下
+        mbTemp.End.PutDownChess(AIBase,false,false,true);//放下
         BaseManger.Instance.ChangsPlayer();//换人走
     }
 

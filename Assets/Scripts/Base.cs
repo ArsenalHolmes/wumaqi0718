@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using System.Threading;
-using System;
-using System.Collections;
+using DG.Tweening;
 
 public enum PlayerState
 {
@@ -72,11 +70,19 @@ public class Base : MonoBehaviour ,IPointerClickHandler{
     /// </summary>
     /// <param name="b"></param>
     /// <param name="back">用来区别是否是退回-退回true正常下false</param>
-    public void PutDownChess(Base b,bool back=false,bool current=false)
+    public void PutDownChess(Base b,bool back=false,bool current=false,bool ai=false)
     {
-        
-        _image.color = Color.white;
-        _image.sprite = b._image.sprite;
+        if (ai)
+        {
+            _image.DOFade(1, 1);//TODO 修改AI棋子显示的时间
+            _image.sprite = b._image.sprite;
+        }
+        else
+        {
+            _image.color = Color.white;
+            _image.sprite = b._image.sprite;
+        }
+
         isDropedChess = false;
         Ps = b.Ps;
         b.Ps = PlayerState.None;
@@ -122,7 +128,8 @@ public class Base : MonoBehaviour ,IPointerClickHandler{
     /// </summary>
     public void BeEat()
     {
-        _image.color = c;
+        _image.DOFade(0, 0.5f);//TODO 修改被吃掉棋子消失的时间
+        //_image.color = c;
         BaseManger.Instance.GetPlayerBaseList(Ps).Remove(this);
         isDropedChess = true;
         Ps = PlayerState.None;
