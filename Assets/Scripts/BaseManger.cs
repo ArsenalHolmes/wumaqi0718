@@ -481,7 +481,7 @@ public class BaseManger : MonoBehaviour
     void TwoClipOne(Base b)
     {
         //周围距离1格的棋子
-        List<Base> AroundChess = aroundOneChess(b);
+        List<Base> AroundChess = aroundZeroBaseList(b,2);
         //跟可以走的路径的做对比
         //相同路径的棋子切距离1格
         List<Base> SamePathChess = GetSamePathList(b, AroundChess);//跟可走路径相同的格子
@@ -500,7 +500,6 @@ public class BaseManger : MonoBehaviour
                 if (temp.Ps != b.Ps && !temp.isDropedChess)
                 {
                     //说明吃掉了
-                    //TODO 把中间棋子吃掉
                     Debug.Log(temp + "挑吃");
                     temp.BeEat();
                 }
@@ -519,6 +518,11 @@ public class BaseManger : MonoBehaviour
         while (samePathList.Count > 0)
         {
             Base temp01 = samePathList[0];
+            if (temp01.Ps==b.Ps)
+            {
+                samePathList.Remove(temp01);
+                continue;
+            }
             Base temp02 = GetSymmetricBase(b, temp01);
             if (temp02 == null)//如果temp02为空说明那边没格子
             {
@@ -540,7 +544,6 @@ public class BaseManger : MonoBehaviour
                 samePathList.Remove(temp02);
                 temp01.BeEat();
                 temp02.BeEat();
-                //TODO 修改 莫名的好了 (之前问题。一方只剩一个的话。如果挑吃的话。只会挑一个)
                 continue;
             }
             samePathList.Remove(temp01);
@@ -684,17 +687,17 @@ public class BaseManger : MonoBehaviour
     /// </summary>
     /// <param name="b"></param>
     /// <returns></returns>
-    public List<Base> aroundZeroBaseList(Base b)
+    public List<Base> aroundZeroBaseList(Base b,int num =1)
     {
         List<Base> Lb = new List<Base>();
-        for (int i = -1; i <= 1; i++)
+        for (int i = -1*num; i <= 1 * num; i=i+1 * num)
         {
             int x = b.x + i;
             if (x > 4 || x < 0)
             {
                 continue;
             }
-            for (int j = -1; j <= 1; j++)
+            for (int j = -1 * num; j <= 1 * num; j=j+1 * num)
             {
                 int y = b.y + j;
                 if (y > 6 || y < 0)
@@ -712,7 +715,7 @@ public class BaseManger : MonoBehaviour
     }
 
     /// <summary>
-    /// 周围距离1格的棋子
+    /// 周围距离1格的棋子   //没用了
     /// </summary>
     public List<Base> aroundOneChess(Base b)
     {
@@ -834,7 +837,7 @@ public class BaseManger : MonoBehaviour
         {
             return;
         }
-        if (CurrentBase.Ps==PlayerState.Black)
+        if (tempPs == PlayerState.Black)
         {
             tempPs = PlayerState.Red;
             PlayPanel.Instance.ChangsPromptText("该红色方走了");

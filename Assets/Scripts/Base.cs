@@ -77,7 +77,6 @@ public class Base : MonoBehaviour ,IPointerClickHandler{
         _image.sprite = b._image.sprite;
         isDropedChess = false;
         Ps = b.Ps;
-        //TODO
         b.Ps = PlayerState.None;
         if (current)
         {
@@ -116,6 +115,9 @@ public class Base : MonoBehaviour ,IPointerClickHandler{
         return this;
     }
 
+    /// <summary>
+    /// 被吃之后初始化
+    /// </summary>
     public void BeEat()
     {
         _image.color = c;
