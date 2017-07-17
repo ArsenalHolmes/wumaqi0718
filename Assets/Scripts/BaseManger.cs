@@ -508,8 +508,8 @@ public class BaseManger : MonoBehaviour
     {
         if (AIPlay == null)
         {
-            //TODO 人人对战
-            if (ps == PlayerState.Red)//电脑输了 黑色输了
+            //TODO 人人对战的结局
+            if (ps == PlayerState.Red)
             {
                 Debug.Log("红色赢了");
                 PlayPanel.Instance.ChangsPromptText("红色赢了");
@@ -521,7 +521,7 @@ public class BaseManger : MonoBehaviour
             }
         }
         else
-        {   //TODO 人机对战
+        {   //TODO 人机对战的结局
             if (ps==PlayerState.Red)//电脑输了 黑色输了 跳转最后界面
             {
                 EndGame();

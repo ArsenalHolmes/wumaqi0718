@@ -65,11 +65,14 @@ public class Base : MonoBehaviour ,IPointerClickHandler{
         }
     }
 
+
     /// <summary>
-    /// 放下棋子
+    /// //放下棋子
     /// </summary>
-    /// <param name="b"></param>
-    /// <param name="back">用来区别是否是退回-退回true正常下false</param>
+    /// <param name="b">实现的目标</param>
+    /// <param name="back">是否是退回  用来区别是否是退回-退回true正常下false</param>
+    /// <param name="current">是否是选中的棋子</param>
+    /// <param name="ai">是否是AI放置的棋子</param>
     public void PutDownChess(Base b,bool back=false,bool current=false,bool ai=false)
     {
         if (ai)
