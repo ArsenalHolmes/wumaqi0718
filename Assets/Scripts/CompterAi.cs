@@ -33,13 +33,18 @@ public class CompterAi : MonoBehaviour
         }
         MBL = Sort(MBL);//排序
         MBL = GetMaxNumList(MBL);//得到最大值得列表
+        if (MBL.Count==0)
+        {
+            Debug.Log("出大问题了AI没路可以走了");
+            return;
+        }
         MoveBase mbTemp = MBL[0];
         while (true)
         {
             int index = Random.Range(0, MBL.Count);
             Debug.Log(index + "   " + MBL.Count);
             mbTemp = MBL[index];
-            if (mbTemp.CanMove())
+            if (mbTemp.Canmove)
             {
                 break;
             }
@@ -48,11 +53,17 @@ public class CompterAi : MonoBehaviour
                 MBL.Remove(mbTemp);
             }
         }
+        BaseManger.Instance.StartBase = mbTemp.Start;
+        BaseManger.Instance.EndBase = mbTemp.End;
         AIBase = mbTemp.Start.TakeUpChess();//拿起
         mbTemp.End.PutDownChess(AIBase);//放下
         BaseManger.Instance.ChangsPlayer();
     }
-
+    /// <summary>
+    /// 列表根据NUM排序
+    /// </summary>
+    /// <param name="lmb"></param>
+    /// <returns></returns>
     List<MoveBase> Sort(List<MoveBase> lmb)
     {
         //外层循环控制的是趟数
@@ -70,12 +81,25 @@ public class CompterAi : MonoBehaviour
         }
         return lmb;
     }
+
+    /// <summary>
+    /// 获得列表中。前两个可以走的格子
+    /// </summary>
+    /// <param name="lmb"></param>
+    /// <returns></returns>
     List<MoveBase> GetMaxNumList(List<MoveBase> lmb)
     {
         List<MoveBase> lb = new List<MoveBase>();
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 10; i++)
         {
-            lb.Add(lmb[i]);
+            if (lmb[i].Canmove)
+            {
+                lb.Add(lmb[i]);
+            }
+            if (lb.Count>=2)
+            {
+                break;
+            }
         }
         return lb;
     }
@@ -85,6 +109,7 @@ public class MoveBase
     Base start;
     Base end;
     int num;
+    bool canmove;
 
     public MoveBase(Base start, Base end, int num)
     {
@@ -132,10 +157,11 @@ public class MoveBase
         }
     }
 
-    public bool CanMove()
+    public bool Canmove
     {
-        BaseManger.Instance.StartBase = start;
-        BaseManger.Instance.EndBase = end;
-        return BaseManger.Instance.ChessMove();
+        get
+        {
+            return BaseManger.Instance.ChessMove(start, end);
+        }
     }
 }

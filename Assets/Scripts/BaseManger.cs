@@ -323,9 +323,9 @@ public class BaseManger : MonoBehaviour
     /// 判断结束格子是否在可走格子内
     /// </summary>
     /// <returns></returns>
-    public bool endBaseInStartBaseList()
+    public bool endBaseInStartBaseList(Base a ,Base b)
     {
-        if (StartBase.aroundBaseList.Contains(EndBase))
+        if (a.aroundBaseList.Contains(b))
         {
             //在内。可以走
             return true;
@@ -337,18 +337,18 @@ public class BaseManger : MonoBehaviour
     /// 起点到终点中间的Base
     /// </summary>
     /// <returns></returns>
-    List<Base> StartToEndBaseList()
+    List<Base> StartToEndBaseList(Base a ,Base b)
     {
         List<Base> Lb = new List<Base>();
-        int x = Mathf.Abs(StartBase.x - EndBase.x);
-        int y = Mathf.Abs(StartBase.y - EndBase.y);
+        int x = Mathf.Abs(a.x - b.x);
+        int y = Mathf.Abs(a.y - b.y);
         if (x == 0 && x != y)
         {
             //在同一行
             for (int i = 0; i < 7; i++)
             {
-                Base temp = baseArr[StartBase.x, i];
-                if (ValueInAtoB(StartBase.y, EndBase.y, temp.y))
+                Base temp = baseArr[a.x, i];
+                if (ValueInAtoB(a.y, b.y, temp.y))
                 {
                     if (temp.canChess)
                     {
@@ -363,8 +363,8 @@ public class BaseManger : MonoBehaviour
             //在同一列
             for (int i = 0; i < 5; i++)
             {
-                Base temp = baseArr[i, StartBase.y];
-                if (ValueInAtoB(StartBase.x, EndBase.x, temp.x))
+                Base temp = baseArr[i, a.y];
+                if (ValueInAtoB(a.x, b.x, temp.x))
                 {
                     if (temp.canChess)
                     {
@@ -379,11 +379,11 @@ public class BaseManger : MonoBehaviour
             int num = Mathf.Abs(x);//间隔数量
             if (num > 1)
             {
-                int tempx = (StartBase.x - EndBase.x) / num;
-                int tempy = (StartBase.y - EndBase.y) / num;
+                int tempx = (a.x - b.x) / num;
+                int tempy = (a.y - b.y) / num;
                 for (int i = 1; i < num; i++)
                 {
-                    Base temp = baseArr[StartBase.x - tempx * i, StartBase.y - tempy * i];
+                    Base temp = baseArr[a.x - tempx * i, a.y - tempy * i];
                     if (temp.canChess)
                     {
                         Lb.Add(temp);
@@ -398,9 +398,9 @@ public class BaseManger : MonoBehaviour
     /// 判断两点间是否有障碍物
     /// </summary>
     /// <returns></returns>
-    public bool aroundObstacle()
+    public bool aroundObstacle(Base a,Base b)
     {
-        foreach (var item in StartToEndBaseList())
+        foreach (var item in StartToEndBaseList(a,b))
         {
             if (!item.isDropedChess)
             {
@@ -414,15 +414,20 @@ public class BaseManger : MonoBehaviour
     /// 判断能否棋子移动
     /// </summary>
     /// <returns></returns>
-    public bool ChessMove()
+    public bool ChessMove(Base start = null,Base end = null)
     {
-        bool InList = endBaseInStartBaseList();
+        if (start==null&&end==null)
+        {
+            start = StartBase;
+            end = EndBase;
+        }
+        bool InList = endBaseInStartBaseList(start,end);
 
         if (!InList)
         {
             return false;
         }
-        bool obs = aroundObstacle();
+        bool obs = aroundObstacle(start,end);
         if (obs)
         {
             // 走
