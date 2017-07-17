@@ -37,7 +37,7 @@ public class EndPanel : UIBase
     void ReturnPlay_Btn_Event()
     {
         Close();
-        PlayPanel.Instance.Open();
+        PlayPanel.Instance.Open(PlayerPrefs.GetFloat("state"));
     }
     #endregion
 

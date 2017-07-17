@@ -59,7 +59,10 @@ public class PlayPanel : UIBase
     public override void Open(float Time = 0)
     {
         //TODO 对战模式的初始化 人人或人机
+        PlayerPrefs.SetFloat("state", Time);
         base.Open(Time);
+        Times = 30f;
+        TotalTime = 0;
         if (Time==1)
         {
             player1.sprite = Resources.Load<Sprite>("Image/玩家");
@@ -79,6 +82,7 @@ public class PlayPanel : UIBase
     /// 修改提示文字
     /// </summary>
     /// <param name="str"></param>
+    /// 
     public void ChangsPromptText(string str)
     {
         PromptText.text = str;

@@ -45,6 +45,7 @@ public class BaseManger : MonoBehaviour
 
         CurrentBase = GameObject.Find("Canvas/Current").GetComponent<Base>();
     }
+
     void Start()
     {
 

@@ -89,7 +89,7 @@ public class CompterAi : MonoBehaviour
     List<MoveBase> GetMaxNumList(List<MoveBase> lmb)
     {
         List<MoveBase> lb = new List<MoveBase>();
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < lmb.Count; i++)
         {
             if (lmb[i].Canmove)
             {
