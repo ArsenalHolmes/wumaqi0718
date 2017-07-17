@@ -26,7 +26,7 @@ public class CompterAi : MonoBehaviour
                 {
                     int count = BaseManger.Instance.GetNum(item);
                     //MoveBase mb = new MoveBase(b, item, BaseManger.Instance.AroundRedBase(item).Count);
-                    MoveBase mb = new MoveBase(b, item, count);//TODO 打不过电脑的模式
+                    MoveBase mb = new MoveBase(b, item, count);
                     MBL.Add(mb);
                 }
             }

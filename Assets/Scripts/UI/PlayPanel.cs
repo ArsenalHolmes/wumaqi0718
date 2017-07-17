@@ -58,17 +58,16 @@ public class PlayPanel : UIBase
 
     public override void Open(float Time = 0)
     {
+        //TODO 对战模式的初始化 人人或人机
         base.Open(Time);
         if (Time==1)
         {
-            //TODO 人机
             player1.sprite = Resources.Load<Sprite>("Image/玩家");
             player2.sprite = Resources.Load<Sprite>("Image/电脑");
             BaseManger.Instance.AIPlay += CompterAi.Instance.AIPlayChess;
         }
         else
         {
-            //TODO 人人
             player1.sprite = Resources.Load<Sprite>("Image/玩家");
             player2.sprite = player1.sprite;
         }
