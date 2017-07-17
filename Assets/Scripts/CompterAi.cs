@@ -138,7 +138,6 @@ public class MoveBase
     Base start;
     Base end;
     int num;
-    bool canmove;
 
     public MoveBase(Base start, Base end, int num)
     {
