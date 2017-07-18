@@ -106,6 +106,7 @@ public class BaseManger : MonoBehaviour
     IEnumerator Aplay()
     {
         yield return new WaitForSeconds(0.35f);
+        //NotificationManger.Instance.DispatchEvent()
         if (AIPlay != null && StartBase != EndBase && StartBase.aroundBaseList.Contains(EndBase) && CurrentBase.Ps != PlayerState.Black)
         {
             AIPlay();
@@ -126,7 +127,7 @@ public class BaseManger : MonoBehaviour
         BlackList = new List<Base>();
 
         tempPs = PlayerState.Red;
-        PlayPanel.Instance.ChangsPromptText("该红色方走了");
+        NotificationManger.Instance.DispatchEvent(EventName.PromptChangs,new Notification("该红色方走了"));
         InitBase();
         InitPlayerChess();
     }
@@ -512,12 +513,12 @@ public class BaseManger : MonoBehaviour
             if (ps == PlayerState.Red)
             {
                 Debug.Log("红色赢了");
-                PlayPanel.Instance.ChangsPromptText("红色赢了");
+                NotificationManger.Instance.DispatchEvent(EventName.PromptChangs, new Notification("红色赢了"));
             }
             else
             {
                 Debug.Log("黑色赢了");
-                PlayPanel.Instance.ChangsPromptText("黑色赢了");
+                NotificationManger.Instance.DispatchEvent(EventName.PromptChangs, new Notification("黑色赢了"));
             }
         }
         else
@@ -526,7 +527,7 @@ public class BaseManger : MonoBehaviour
             {
                 EndGame();
                 UIManger.Instance.PushPanel(UIName.EndPanel);
-                EndPanel.Instance.Open(PlayPanel.Instance.TotalTime);
+                NotificationManger.Instance.DispatchEvent(EventName.TotalTime, new Notification(PlayPanel.Instance.TotalTime));
             }
             else
             {
@@ -848,14 +849,14 @@ public class BaseManger : MonoBehaviour
         if (tempPs == PlayerState.Black)
         {
             tempPs = PlayerState.Red;
-            PlayPanel.Instance.ChangsPromptText("该红色方走了");
+            NotificationManger.Instance.DispatchEvent(EventName.PromptChangs, new Notification("该红色方走了"));
         }
         else
         {
             tempPs = PlayerState.Black;
-            PlayPanel.Instance.ChangsPromptText("该黑色方走了");
+            NotificationManger.Instance.DispatchEvent(EventName.PromptChangs, new Notification("该黑色方走了"));
         }
-        PlayPanel.Instance.ChangPlayer();
+        NotificationManger.Instance.DispatchEvent(EventName.PlayerChang, null);
     }
 
     /// <summary>

@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-using System;
 
 public class PlayPanel : BasePanel
 {
@@ -24,6 +23,7 @@ public class PlayPanel : BasePanel
     {
         Instance = this;
         UIInit();
+        EventInit();
     }
     private void Update()
     {
@@ -49,6 +49,12 @@ public class PlayPanel : BasePanel
         PromptText = transform.Find("Prompt/Prompt_Text").GetComponent<Text>();
         player1 = transform.Find("qipan/Player1").GetComponent<Image>();
         player2 = transform.Find("qipan/Player2").GetComponent<Image>();
+    }
+    void EventInit()
+    {
+        NotificationManger.Instance.AddEventListener(EventName.PlayerChang, ChangPlayer);
+        NotificationManger.Instance.AddEventListener(EventName.PromptChangs, ChangsPromptText);
+        //NotificationManger.Instance.AddEventListener(EventName.TimeChangs, ChangsTime);
     }
 
     void back_Btn_Event()
@@ -86,18 +92,18 @@ public class PlayPanel : BasePanel
     /// </summary>
     /// <param name="str"></param>
     /// 
-    public void ChangsPromptText(string str)
+    public void ChangsPromptText(Notification obj)
     {
-        PromptText.text = str;
+        PromptText.text = obj.Str;
     }
 
-    public void ChangPlayer()
+    public void ChangPlayer(Notification obj)
     {
         Times = 30;
     }
 
-    void ChangsTime(float str)
+    void ChangsTime(float Times)
     {
-        TimeText.text = str.ToString("0");
+        TimeText.text = Times.ToString("0");
     }
 }

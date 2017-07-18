@@ -12,10 +12,11 @@ public class EndPanel : BasePanel
     {
         Instance = this;
         UIInit();
+        EventInit();
     }
-    public void Open(float Time = 0)
+    void EventInit()
     {
-        TimeText.text = "总共用时"+ Time.ToString("0")+"秒";
+        NotificationManger.Instance.AddEventListener(EventName.TotalTime, TotalTime);
     }
 
     #region 初始化UI及Btn赋值
@@ -36,6 +37,11 @@ public class EndPanel : BasePanel
     {
         UIManger.Instance.PushPanel(UIName.PlayPanel);
         PlayPanel.Instance.Open(PlayerPrefs.GetFloat("state"));
+    }
+
+    void TotalTime(Notification obj)
+    {
+        TimeText.text = "总共用时" + obj.Flo.ToString("0") + "秒";
     }
     #endregion
 
