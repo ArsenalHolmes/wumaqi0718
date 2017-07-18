@@ -36,7 +36,6 @@ public class BaseManger : MonoBehaviour
     //缺少介绍的4个按钮动画和结束输赢的动画
     //人人对战输赢结束场景    改变字体
     //人机对战  电脑赢了出现什么场景  改变文字
-    //挑夹吃  触发的次数
 
     private void Awake()
     {
@@ -64,9 +63,13 @@ public class BaseManger : MonoBehaviour
     /// </summary>
     void CurrentMove()
     {
-        if (isCurrent)
+        if (isCurrent&&Input.GetMouseButton(0))
         {
             CurrentBase.transform.position = Input.mousePosition;
+        }
+        else if (isCurrent&&!Input.GetMouseButton(0))
+        {
+            DontMove();
         }
     }
 
@@ -147,7 +150,7 @@ public class BaseManger : MonoBehaviour
             for (int j = 0; j < 7; j++)
             {
                 InitBack -= baseArr[i, j].InitList;
-                DestroyImmediate(baseArr[i, j].gameObject);
+                Destroy(baseArr[i, j].gameObject);
             }
         }
         if (AIPlay != null)
@@ -259,6 +262,8 @@ public class BaseManger : MonoBehaviour
 
     #endregion
 
+    #region 一些其他的方法
+
     /// <summary>
     /// 移动失败恢复走前状态
     /// </summary>
@@ -290,6 +295,8 @@ public class BaseManger : MonoBehaviour
         temp02.PutDownChess(AIBase, false, false, true);//放下
         Instance.ChangsPlayer();//换人走
     }
+
+    #endregion
 
     #region 吃棋子的判断和实现
 

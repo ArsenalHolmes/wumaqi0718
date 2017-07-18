@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using DG.Tweening;
+using System;
 
 public enum PlayerState
 {
@@ -11,7 +12,8 @@ public enum PlayerState
     None,
 }
 
-public class Base : MonoBehaviour ,IPointerClickHandler{
+public class Base : MonoBehaviour ,IDropHandler, IInitializePotentialDragHandler,IDragHandler
+{
     Color c = new Color(1, 1, 1, 0);//初始颜色
     Image _image;//图片
     public bool canChess=true;//能不能下棋//默认可以
@@ -27,6 +29,7 @@ public class Base : MonoBehaviour ,IPointerClickHandler{
         _image = transform.Find("Image").GetComponent<Image>();
         _image.color = c;
     }
+
     /// <summary>
     /// 初始化可走格子
     /// </summary>
@@ -63,7 +66,6 @@ public class Base : MonoBehaviour ,IPointerClickHandler{
             aroundBaseList = BaseManger.Instance.GetAppointBase(x, y);
         }
     }
-
 
     /// <summary>
     /// //放下棋子
@@ -136,14 +138,15 @@ public class Base : MonoBehaviour ,IPointerClickHandler{
         Ps = PlayerState.None;
     }
 
+    #region 旧的棋子移动模式 点击模式  要改回去需要改BaseManger.CurrentMove
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (Ps!=BaseManger.Instance.tempPs&&!BaseManger.Instance.isCurrent)
+        if (Ps != BaseManger.Instance.tempPs && !BaseManger.Instance.isCurrent)
         {
             //该走颜色的棋子。跟你选择的棋子不一致
             return;
         }
-        if (eventData == null||PointerEventData.InputButton.Left==eventData.button)
+        if (eventData == null || PointerEventData.InputButton.Left == eventData.button)
         {
             if (BaseManger.Instance.isCurrent)//选中东西了
             {
@@ -172,5 +175,60 @@ public class Base : MonoBehaviour ,IPointerClickHandler{
                 }
             }
         }
+    }
+    #endregion
+    public void OnDrop(PointerEventData eventData)
+    {
+        //放下时候执行
+        if (Ps != BaseManger.Instance.tempPs && !BaseManger.Instance.isCurrent)
+        {
+            //该走颜色的棋子。跟你选择的棋子不一致
+            return;
+        }
+        if (eventData == null || PointerEventData.InputButton.Left == eventData.button)
+        {
+            if (BaseManger.Instance.isCurrent)//选中东西了
+            {
+                if (isDropedChess)
+                {
+                    //先判断能否走这个格子
+                    BaseManger.Instance.EndBase = this;
+                    if (!BaseManger.Instance.ChessMove())
+                    {
+                        //不能走
+                        Debug.Log("不能走");
+                        BaseManger.Instance.DontMove();
+                        return;
+                    }
+                    //这块没东西把东西放下
+                    PutDownChess(BaseManger.Instance.CloseCurrent(true));
+                }
+            }
+        }
+
+    }
+
+    public void OnInitializePotentialDrag(PointerEventData eventData)
+    {
+        if (Ps != BaseManger.Instance.tempPs && !BaseManger.Instance.isCurrent)
+        {
+            //该走颜色的棋子。跟你选择的棋子不一致
+            return;
+        }
+        if (eventData == null || PointerEventData.InputButton.Left == eventData.button)
+        {
+            if (!isDropedChess)
+            {
+                //拿起东西
+                BaseManger.Instance.CurrentBase.Ps = Ps;
+                BaseManger.Instance.ShowCurrent(TakeUpChess());
+                BaseManger.Instance.StartBase = this;
+            }
+        }
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        
     }
 }

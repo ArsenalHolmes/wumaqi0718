@@ -105,7 +105,7 @@ public class CompterAi : MonoBehaviour
             {
                 lb.Add(lmb[i]);
             }
-            if (lb.Count>=2)
+            if (lb.Count>=3)
             {
                 break;
             }

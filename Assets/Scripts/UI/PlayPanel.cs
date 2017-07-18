@@ -10,7 +10,7 @@ public class PlayPanel : BasePanel
     Button back;
     Image player1;
     Image player2;
-    public float AppointTime=5f;
+    public float AppointTime=30f;
     float Times;
     public float TotalTime;
 
