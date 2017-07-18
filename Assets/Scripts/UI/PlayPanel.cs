@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System;
+
 public class PlayPanel : UIBase
 {
     public static PlayPanel Instance;
@@ -16,7 +18,7 @@ public class PlayPanel : UIBase
     bool isPlay;
     private void Start()
     {
-        
+
     }
     private void Awake()
     {
@@ -37,7 +39,9 @@ public class PlayPanel : UIBase
             TotalTime += Time.deltaTime;
         }
     }
+
     #region 初始化UI及Btn赋值
+
     void UIInit()
     {
         back = transform.Find("Back").GetComponent<Button>();
@@ -47,6 +51,7 @@ public class PlayPanel : UIBase
         player1 = transform.Find("qipan/Player1").GetComponent<Image>();
         player2 = transform.Find("qipan/Player2").GetComponent<Image>();
     }
+
     void back_Btn_Event()
     {
         Close();
@@ -54,6 +59,7 @@ public class PlayPanel : UIBase
         BaseManger.Instance.EndGame();
         isPlay = false;
     }
+
     #endregion
 
     public override void Open(float Time = 0)
