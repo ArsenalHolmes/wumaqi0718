@@ -43,21 +43,20 @@ public class Base : MonoBehaviour ,IPointerClickHandler{
         {
             aroundBaseList = BaseManger.Instance.aroundBase(this);
         }
-        //|| (x == 1 && y == 5) || (x == 3 && y == 5)
         if ((x==0&&y==2)|| (x == 1 && y == 3) || (x == 4 && y == 2) || (x == 3 && y == 3) )
         {
             return;
         }
-        if (x==2&&y==5)
-        {
-            aroundBaseList.Remove(BaseManger.Instance.baseArr[0, 5]);
-            aroundBaseList.Remove(BaseManger.Instance.baseArr[4, 5]);
-        }
-        if (x==3||x==1||x==0||x==4)
+        //if (x==2&&y==5)
+        //{
+        //    aroundBaseList.Remove(BaseManger.Instance.baseArr[0, 5]);
+        //    aroundBaseList.Remove(BaseManger.Instance.baseArr[4, 5]);
+        //}
+        if ((x==3||x==1||x==0||x==4)&&y==4)
         {
             aroundBaseList.Remove(BaseManger.Instance.baseArr[1, 5]);
             aroundBaseList.Remove(BaseManger.Instance.baseArr[3, 5]);
-            aroundBaseList.Remove(BaseManger.Instance.baseArr[2, 6]);
+            //aroundBaseList.Remove(BaseManger.Instance.baseArr[2, 6]);
         }
         if (((x==1||x==3)&&y==5)||(x==2&&y==6))
         {
@@ -132,7 +131,6 @@ public class Base : MonoBehaviour ,IPointerClickHandler{
     public void BeEat()
     {
         _image.DOFade(0, 0.5f);//TODO 修改被吃掉棋子消失的时间
-        //_image.color = c;
         BaseManger.Instance.GetPlayerBaseList(Ps).Remove(this);
         isDropedChess = true;
         Ps = PlayerState.None;

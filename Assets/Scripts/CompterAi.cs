@@ -14,7 +14,6 @@ public class CompterAi : MonoBehaviour
     }
     public void AIPlayChess()
     {
-        //TODO 当玩家棋子只剩一个的时候。会弱智
         List<MoveBase> MBL = GetBaseCanMoveList();
         MBL = Sort(MBL);//根据NUM排序  NUM是走的那里可以吃的格子的数量
         MoveBase mbTemp;
@@ -114,6 +113,12 @@ public class CompterAi : MonoBehaviour
         return lb;
     }
 
+    /// <summary>
+    /// 得到移动路径
+    /// </summary>
+    /// <param name="b"></param>
+    /// <param name="lmb"></param>
+    /// <returns></returns>
     MoveBase GetMovePath(Base b , List<MoveBase> lmb)
     {
         foreach (var item in lmb)

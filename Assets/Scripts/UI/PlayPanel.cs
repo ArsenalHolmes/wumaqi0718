@@ -10,14 +10,14 @@ public class PlayPanel : BasePanel
     Button back;
     Image player1;
     Image player2;
-
-    float Times = 30f;
+    public float AppointTime=5f;
+    float Times;
     public float TotalTime;
 
     bool isPlay;
     private void Start()
     {
-
+        Times = AppointTime;
     }
     private void Awake()
     {
@@ -29,12 +29,12 @@ public class PlayPanel : BasePanel
     {
         if (isPlay)
         {
+            if (Times < 0.5f)
+            {
+                BaseManger.Instance.TimeOut();
+            }
             Times -= Time.deltaTime;
             ChangsTime(Times);
-            if (Times<=0.5f)
-            {
-                //TODO 倒计时结束咋办
-            }
             TotalTime += Time.deltaTime;
         }
     }
@@ -54,7 +54,6 @@ public class PlayPanel : BasePanel
     {
         NotificationManger.Instance.AddEventListener(EventName.PlayerChang, ChangPlayer);
         NotificationManger.Instance.AddEventListener(EventName.PromptChangs, ChangsPromptText);
-        //NotificationManger.Instance.AddEventListener(EventName.TimeChangs, ChangsTime);
     }
 
     void back_Btn_Event()
@@ -68,9 +67,8 @@ public class PlayPanel : BasePanel
 
     public void Open(float Time = 0)
     {
-        //TODO 对战模式的初始化 人人或人机
         PlayerPrefs.SetFloat("state", Time);
-        Times = 30f;
+        Times = AppointTime;
         TotalTime = 0;
         if (Time==1)
         {
@@ -99,7 +97,7 @@ public class PlayPanel : BasePanel
 
     public void ChangPlayer(Notification obj)
     {
-        Times = 30;
+        Times = AppointTime;
     }
 
     void ChangsTime(float Times)

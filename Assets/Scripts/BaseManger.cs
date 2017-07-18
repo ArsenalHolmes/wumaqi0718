@@ -30,12 +30,13 @@ public class BaseManger : MonoBehaviour
     //TODO 注意点  
 
     //不管胜几个棋子。只要没路走就算输。测试
+    //一次走一个格子
 
-    //出现还剩多个棋子但是没路走了怎么办
+    //平局咋算
     //缺少介绍的4个按钮动画和结束输赢的动画
-    //人人对战输赢结束场景
-    //人机对战  电脑赢了出现什么场景 
-    //挑夹吃  触发的技术
+    //人人对战输赢结束场景    改变字体
+    //人机对战  电脑赢了出现什么场景  改变文字
+    //挑夹吃  触发的次数
 
     private void Awake()
     {
@@ -200,19 +201,19 @@ public class BaseManger : MonoBehaviour
         Sprite Red = Resources.Load<Sprite>("Image/红棋子");
         for (int i = 0; i < 5; i++)
         {
-            baseArr[i, 0].PutDownChess(Black, PlayerState.Black);
-            BlackList.Add(baseArr[i, 0]);
-            baseArr[i, 4].PutDownChess(Red, PlayerState.Red);
-            RedList.Add(baseArr[i, 4]);
+            baseArr[0, i].PutDownChess(Black, PlayerState.Black);
+            BlackList.Add(baseArr[0, i]);
+            baseArr[4, i].PutDownChess(Red, PlayerState.Red);
+            RedList.Add(baseArr[4, i]);
         }
-        baseArr[0, 1].PutDownChess(Black, PlayerState.Black);
-        BlackList.Add(baseArr[0, 1]);
-        baseArr[4, 1].PutDownChess(Black, PlayerState.Black);
-        BlackList.Add(baseArr[4, 1]);
-        baseArr[0, 3].PutDownChess(Red, PlayerState.Red);
-        RedList.Add(baseArr[0, 3]);
-        baseArr[4, 3].PutDownChess(Red, PlayerState.Red);
-        RedList.Add(baseArr[4, 3]);
+        baseArr[1, 0].PutDownChess(Black, PlayerState.Black);
+        BlackList.Add(baseArr[1, 0]);
+        baseArr[1, 4].PutDownChess(Black, PlayerState.Black);
+        BlackList.Add(baseArr[1, 4]);
+        baseArr[3, 0].PutDownChess(Red, PlayerState.Red);
+        RedList.Add(baseArr[3, 0]);
+        baseArr[3, 4].PutDownChess(Red, PlayerState.Red);
+        RedList.Add(baseArr[3, 4]);
 
     }
 
@@ -234,83 +235,6 @@ public class BaseManger : MonoBehaviour
     }
 
     /// <summary>
-    /// 起点到终点中间的Base
-    /// </summary>
-    /// <returns></returns>
-    List<Base> StartToEndBaseList(Base a ,Base b)
-    {
-        List<Base> Lb = new List<Base>();
-        int x = Mathf.Abs(a.x - b.x);
-        int y = Mathf.Abs(a.y - b.y);
-        if (x == 0 && x != y)
-        {
-            //在同一行
-            for (int i = 0; i < 7; i++)
-            {
-                Base temp = baseArr[a.x, i];
-                if (ValueInAtoB(a.y, b.y, temp.y))
-                {
-                    if (temp.canChess)
-                    {
-                        Lb.Add(temp);
-                    }
-
-                }
-            }
-        }
-        else if (y == 0 && x != y)
-        {
-            //在同一列
-            for (int i = 0; i < 5; i++)
-            {
-                Base temp = baseArr[i, a.y];
-                if (ValueInAtoB(a.x, b.x, temp.x))
-                {
-                    if (temp.canChess)
-                    {
-                        Lb.Add(temp);
-                    }
-                }
-            }
-        }
-        else if (x == y)
-        {
-            //同一条斜线上的
-            int num = Mathf.Abs(x);//间隔数量
-            if (num > 1)
-            {
-                int tempx = (a.x - b.x) / num;
-                int tempy = (a.y - b.y) / num;
-                for (int i = 1; i < num; i++)
-                {
-                    Base temp = baseArr[a.x - tempx * i, a.y - tempy * i];
-                    if (temp.canChess)
-                    {
-                        Lb.Add(temp);
-                    }
-                }
-            }
-        }
-        return Lb;
-    }
-
-    /// <summary>
-    /// 判断两点间是否有障碍物
-    /// </summary>
-    /// <returns></returns>
-    public bool aroundObstacle(Base a,Base b)
-    {
-        foreach (var item in StartToEndBaseList(a,b))
-        {
-            if (!item.isDropedChess)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /// <summary>
     /// 判断能否棋子移动
     /// </summary>
     /// <returns></returns>
@@ -323,36 +247,16 @@ public class BaseManger : MonoBehaviour
         }
         bool InList = endBaseInStartBaseList(start,end);
 
-        if (!InList)
+        if (InList)
+        {
+            return true;
+        }
+        else
         {
             return false;
         }
-        bool obs = aroundObstacle(start,end);
-        if (obs)
-        {
-            // 走
-            return true;
-        }
-        return false;
     }
 
-    /// <summary>
-    /// 判断一个数。是否在另外两个数中间
-    /// </summary>
-    /// <param name="num1"></param>
-    /// <param name="num2"></param>
-    /// <param name="target"></param>
-    /// <returns></returns>
-    bool ValueInAtoB(int num1, int num2, int target)
-    {
-        int max = Mathf.Max(num1, num2);
-        int min = Mathf.Min(num1, num2);
-        if (target < max && target > min)
-        {
-            return true;
-        }
-        return false;
-    }
     #endregion
 
     /// <summary>
@@ -361,6 +265,30 @@ public class BaseManger : MonoBehaviour
     public void DontMove()
     {
         StartBase.PutDownChess(CloseCurrent(), true);
+    }
+
+    /// <summary>
+    /// 倒计时到。随机走一步
+    /// </summary>
+    public void TimeOut()
+    {
+        List<Base> tempList = GetPlayerBaseList(tempPs);
+        Base temp;
+        Base temp02;
+        while (true)
+        {
+            temp = tempList[UnityEngine.Random.Range(0, tempList.Count)];
+            temp02 = temp.aroundBaseList[UnityEngine.Random.Range(0, temp.aroundBaseList.Count)];
+            if (temp02.Ps == PlayerState.None && temp02.isDropedChess)
+            {
+                break;
+            }
+        }
+        Instance.StartBase = temp;
+        Instance.EndBase = temp02;
+        Base AIBase = temp.TakeUpChess();//拿起
+        temp02.PutDownChess(AIBase, false, false, true);//放下
+        Instance.ChangsPlayer();//换人走
     }
 
     #region 吃棋子的判断和实现
@@ -374,11 +302,9 @@ public class BaseManger : MonoBehaviour
         ToEatBase(OnePickTwo(b));//一挑二
         ToEatBase(TwoClipOne(b));//二夹一
         ToEatBase(dachi(b));//打吃
-        if (!WinOrLose02() || !WinOrLose())
-        {
-            
-            return;
-        }
+
+        WinOrLose();
+        WinOrLose02();
     }
 
     /// <summary>
@@ -389,21 +315,17 @@ public class BaseManger : MonoBehaviour
     {
         //周围距离1格的棋子
         List<Base> AroundChess = aroundZeroBaseList(b,2);
-        //跟可以走的路径的做对比
-        //相同路径的棋子切距离1格
-        List<Base> SamePathChess = GetSamePathList(b, AroundChess);//跟可走路径相同的格子
-
         List<Base> lb = new List<Base>();
         //如果有棋子而且类型一样。找找俩中间是否有棋子
-        for (int i = 0; i < SamePathChess.Count; i++)
+        for (int i = 0; i < AroundChess.Count; i++)
         {
-            Base item = SamePathChess[i];
+            Base item = AroundChess[i];
             if (b.Ps == item.Ps && !item.isDropedChess)
             {
                 Base temp = GetBaseAroundByAtoB(b, item);
                 if (temp==null)
                 {
-                    return null;
+                    continue;
                 }
                 if (temp.Ps != b.Ps && !temp.isDropedChess)
                 {
@@ -611,21 +533,21 @@ public class BaseManger : MonoBehaviour
     #region 获得特定格子的方法
 
     /// <summary>
-    /// 周围竖向和横向的格子--不限制距离
+    /// 周围竖向和横向的格子--一格
     /// </summary>
     /// <param name="b"></param>
     /// <returns></returns>
     public List<Base> aroundLineBase(Base b)
     {
         List<Base> Lb = new List<Base>();
-        for (int i = -4; i <= 4; i++)
+        for (int i = -1; i <= 1; i++)
         {
             int x = b.x + i;
             if ((x >= 5 || x < 0))
             {
                 continue;
             }
-            for (int j = -6; j <= 6; j++)
+            for (int j = -1; j <= 1; j++)
             {
                 int y = b.y + j;
                 if (y >= 7 || y < 0 || Mathf.Abs(i) == Mathf.Abs(j))
@@ -647,21 +569,21 @@ public class BaseManger : MonoBehaviour
     }
 
     /// <summary>
-    /// 获得周围周围格子--不限制距离
+    /// 获得周围周围格子--格
     /// </summary>
     /// <param name="b"></param>
     /// <returns></returns>
     public List<Base> aroundBase(Base b)
     {
         List<Base> Lb = new List<Base>();
-        for (int i = -4; i <= 4; i++)
+        for (int i = -1; i <= 1; i++)
         {
             int x = b.x + i;
             if ((x >= 5 || x < 0))
             {
                 continue;
             }
-            for (int j = -6; j <= 6; j++)
+            for (int j = -1; j <= 1; j++)
             {
                 if ((Mathf.Abs(i) == Mathf.Abs(j) || i == 0 || j == 0) && !(i == 0 && j == 0))
                 {
@@ -690,30 +612,16 @@ public class BaseManger : MonoBehaviour
     public List<Base> GetAppointBase(int x, int y)
     {
         List<Base> Lb = new List<Base>();
-        if (x == 1 && y == 5)
+        if ((x == 1 && y == 5) || (x == 3 && y == 5))
         {
             Lb.Add(baseArr[2, 4]);
             Lb.Add(baseArr[2, 5]);
             Lb.Add(baseArr[2, 6]);
-            Lb.Add(baseArr[3, 5]);
-            Lb.Add(baseArr[3, 3]);
-            Lb.Add(baseArr[4, 2]);
-        }
-        else if (x == 3 && y == 5)
-        {
-            Lb.Add(baseArr[2, 4]);
-            Lb.Add(baseArr[2, 5]);
-            Lb.Add(baseArr[2, 6]);
-            Lb.Add(baseArr[1, 5]);
-            Lb.Add(baseArr[1, 3]);
-            Lb.Add(baseArr[0, 2]);
         }
         else if (x == 2 && y == 6)
         {
-            for (int i = 0; i < 7; i++)
-            {
-                Lb.Add(baseArr[2, i]);
-            }
+
+            Lb.Add(baseArr[2, 5]);
             Lb.Add(baseArr[1, 5]);
             Lb.Add(baseArr[3, 5]);
         }
