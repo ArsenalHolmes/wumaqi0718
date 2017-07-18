@@ -196,7 +196,6 @@ public class Base : MonoBehaviour ,IDropHandler, IInitializePotentialDragHandler
                     if (!BaseManger.Instance.ChessMove())
                     {
                         //不能走
-                        Debug.Log("不能走");
                         BaseManger.Instance.DontMove();
                         return;
                     }

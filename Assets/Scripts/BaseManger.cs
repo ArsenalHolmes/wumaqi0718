@@ -428,7 +428,7 @@ public class BaseManger : MonoBehaviour
         }
     }
     #endregion
-    
+
     #region 输赢显示和判断  
     /// <summary>
     /// 展示输赢
@@ -436,33 +436,28 @@ public class BaseManger : MonoBehaviour
     /// <param name="ps"></param>
     void ShowWin(PlayerState ps)
     {
-        if (AIPlay == null)
+        Notification no = new Notification(PlayPanel.Instance.TotalTime);
+        //TODO 人人对战的结局
+        if (ps == PlayerState.Red)
         {
-            //TODO 人人对战的结局
-            if (ps == PlayerState.Red)
-            {
-                Debug.Log("红色赢了");
-                NotificationManger.Instance.DispatchEvent(EventName.PromptChangs, new Notification("红色赢了"));
-            }
-            else
-            {
-                Debug.Log("黑色赢了");
-                NotificationManger.Instance.DispatchEvent(EventName.PromptChangs, new Notification("黑色赢了"));
-            }
+            no.Str = "RedWin";
         }
         else
-        {   //TODO 人机对战的结局
-            if (ps==PlayerState.Red)//电脑输了 黑色输了 跳转最后界面
-            {
-                EndGame();
-                UIManger.Instance.PushPanel(UIName.EndPanel);
-                NotificationManger.Instance.DispatchEvent(EventName.TotalTime, new Notification(PlayPanel.Instance.TotalTime));
-            }
-            else
-            {
-                Debug.Log("电脑赢了");
-            }
+        {
+            no.Str = "BlackWin";
         }
+        //TODO 人机对战的结局
+        if (ps == PlayerState.Red)//电脑输了 黑色输了 跳转最后界面
+        {
+            no.Str = "RedWin";
+        }
+        else
+        {
+            no.Str = "BlackWin";
+        }
+        EndGame();
+        NotificationManger.Instance.DispatchEvent(EventName.TotalTime, no);
+        UIManger.Instance.PushPanel(UIName.EndPanel);
     }
 
     /// <summary>
@@ -661,7 +656,6 @@ public class BaseManger : MonoBehaviour
                 {
                     Lb.Add(baseArr[x, y]);
                 }
-                
             }
         }
         return Lb;
