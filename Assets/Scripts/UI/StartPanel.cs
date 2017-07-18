@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-public class StartPanel:UIBase
+public class StartPanel: BasePanel
 {
     public static StartPanel Instance;
     Button Introduce;
@@ -14,6 +14,7 @@ public class StartPanel:UIBase
         InitUI();
     }
     #region 初始化BTN。绑定对应事件
+
     void InitUI()
     {
         Introduce = transform.Find("Introduce").GetComponent<Button>();
@@ -25,18 +26,17 @@ public class StartPanel:UIBase
     }
     public void Introduce_Event()
     {
-        IntroducePanel.Instance.Open();
-        Close();
+        UIManger.Instance.PushPanel(UIName.IntroducePanel);
     }
     void PeoplePlay_Event()
     {
+        UIManger.Instance.PushPanel(UIName.PlayPanel);
         PlayPanel.Instance.Open(0);
-        Close();
     }
     void CompterPlay_Event()
     {
+        UIManger.Instance.PushPanel(UIName.PlayPanel);
         PlayPanel.Instance.Open(1);
-        Close();
     }
     #endregion
 

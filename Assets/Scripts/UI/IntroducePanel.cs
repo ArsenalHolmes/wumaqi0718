@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-public class IntroducePanel:UIBase 
+public class IntroducePanel: BasePanel
 {
     public static IntroducePanel Instance;
     Button tiao;
@@ -13,7 +13,6 @@ public class IntroducePanel:UIBase
     {
         Instance = this;
         UIInit();
-        Close();
     }
     void UIInit()
     {
@@ -42,7 +41,6 @@ public class IntroducePanel:UIBase
     }
     void back_Btn_Event()
     {
-        Close();
-        StartPanel.Instance.Open();
+        UIManger.Instance.PushPanel(UIName.StartPanel);
     }
 }

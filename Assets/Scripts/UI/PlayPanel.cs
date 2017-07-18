@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using System;
 
-public class PlayPanel : UIBase
+public class PlayPanel : BasePanel
 {
     public static PlayPanel Instance;
     Text TimeText;
@@ -24,7 +24,6 @@ public class PlayPanel : UIBase
     {
         Instance = this;
         UIInit();
-        Close();
     }
     private void Update()
     {
@@ -54,19 +53,17 @@ public class PlayPanel : UIBase
 
     void back_Btn_Event()
     {
-        Close();
-        StartPanel.Instance.Open();
         BaseManger.Instance.EndGame();
         isPlay = false;
+        UIManger.Instance.PushPanel(UIName.StartPanel);
     }
 
     #endregion
 
-    public override void Open(float Time = 0)
+    public void Open(float Time = 0)
     {
         //TODO 对战模式的初始化 人人或人机
         PlayerPrefs.SetFloat("state", Time);
-        base.Open(Time);
         Times = 30f;
         TotalTime = 0;
         if (Time==1)

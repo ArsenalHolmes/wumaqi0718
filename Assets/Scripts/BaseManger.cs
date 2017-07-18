@@ -525,7 +525,7 @@ public class BaseManger : MonoBehaviour
             if (ps==PlayerState.Red)//电脑输了 黑色输了 跳转最后界面
             {
                 EndGame();
-                PlayPanel.Instance.Close();
+                UIManger.Instance.PushPanel(UIName.EndPanel);
                 EndPanel.Instance.Open(PlayPanel.Instance.TotalTime);
             }
             else

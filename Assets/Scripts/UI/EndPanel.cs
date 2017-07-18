@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class EndPanel : UIBase
+public class EndPanel : BasePanel
 {
     public static EndPanel Instance;
     Text TimeText;
@@ -12,11 +12,9 @@ public class EndPanel : UIBase
     {
         Instance = this;
         UIInit();
-        Close();
     }
-    public override void Open(float Time = 0)
+    public void Open(float Time = 0)
     {
-        base.Open(Time);
         TimeText.text = "总共用时"+ Time.ToString("0")+"秒";
     }
 
@@ -31,12 +29,12 @@ public class EndPanel : UIBase
     }
     void back_Btn_Event()
     {
-        Close();
-        StartPanel.Instance.Open();
+        //回主菜单
+        UIManger.Instance.PushPanel(UIName.StartPanel);
     }
     void ReturnPlay_Btn_Event()
     {
-        Close();
+        UIManger.Instance.PushPanel(UIName.PlayPanel);
         PlayPanel.Instance.Open(PlayerPrefs.GetFloat("state"));
     }
     #endregion

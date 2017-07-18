@@ -26,10 +26,6 @@ public class CompterAi : MonoBehaviour
         else
         {
             MBL = GetMaxNumList(MBL);//得到最大值得列表
-            foreach (var item in MBL)
-            {
-                Debug.Log(item.ToString());
-            }
             if (MBL.Count == 0)
             {
                 Debug.Log("出大问题了AI没路可以走了");
