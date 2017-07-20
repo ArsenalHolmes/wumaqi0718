@@ -139,6 +139,7 @@ public class Base : MonoBehaviour ,IDropHandler, IInitializePotentialDragHandler
     }
 
     #region 旧的棋子移动模式 点击模式  要改回去需要改BaseManger.CurrentMove
+
     public void OnPointerClick(PointerEventData eventData)
     {
         if (Ps != BaseManger.Instance.tempPs && !BaseManger.Instance.isCurrent)
@@ -176,7 +177,9 @@ public class Base : MonoBehaviour ,IDropHandler, IInitializePotentialDragHandler
             }
         }
     }
+
     #endregion
+
     public void OnDrop(PointerEventData eventData)
     {
         //放下时候执行

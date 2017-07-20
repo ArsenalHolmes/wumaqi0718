@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System;
 using System.Collections;
 
+
 public class BaseManger : MonoBehaviour
 {
     #region 一些属性
@@ -48,12 +49,61 @@ public class BaseManger : MonoBehaviour
 
     void Start()
     {
-
+        
+    }
+    void Test()
+    {
+        List<int> list01 = new List<int>() {1,3,5,7,9};
+        List<int> list02 = new List<int>() {2,4,6,8,10};
+        List<int> list03 = new List<int>();
+        int alen = list01.Count;
+        int blen = list02.Count;
+        int a=0, b=0;
+        while (a<alen&&b<blen)
+        {
+            if (list01[a]<list02[b])
+            {
+                list03.Add(list01[a]);
+                a++;
+            }
+            else
+            {
+                list03.Add(list02[b]);
+                b++;
+            }
+        }
+        while (a<alen)
+        {
+            list03.Add(list01[a]);
+            a++;
+        }
+        while (b<blen)
+        {
+            list03.Add(list02[b]);
+            b++;
+        }
+        foreach (var item in list03)
+        {
+            Debug.Log(item);
+        }
     }
 
     void Update()
     {
-        CurrentMove();
+        //CurrentMove();
+        //if (isCurrent && !Input.GetMouseButton(0))
+        if (isCurrent && Input.GetMouseButtonUp(0))
+        {
+            DontMove();
+        }
+    }
+    private void FixedUpdate()
+    {
+        //CurrentMove();
+        if (isCurrent && Input.GetMouseButton(0))
+        {
+            CurrentBase.transform.position = Input.mousePosition;
+        }
     }
 
     #region 选中棋子的跟随。显示。隐藏
@@ -93,7 +143,6 @@ public class BaseManger : MonoBehaviour
     {
         isCurrent = false;
         CurrentBase.gameObject.SetActive(false);
-
         if (back)
         {
             ChangsPlayer();
@@ -110,7 +159,6 @@ public class BaseManger : MonoBehaviour
     IEnumerator Aplay()
     {
         yield return new WaitForSeconds(0.35f);
-        //NotificationManger.Instance.DispatchEvent()
         if (AIPlay != null && StartBase != EndBase && StartBase.aroundBaseList.Contains(EndBase) && CurrentBase.Ps != PlayerState.Black)
         {
             AIPlay();
@@ -157,6 +205,7 @@ public class BaseManger : MonoBehaviour
         {
             AIPlay-=CompterAi.Instance.AIPlayChess;
         }
+        PlayPanel.Instance.isPlay = false;
     }
 
     /// <summary>
@@ -164,7 +213,6 @@ public class BaseManger : MonoBehaviour
     /// </summary>
     void InitBase()
     {
-
         for (int i = 0; i <= 4; i++)
         {
             for (int j = 0; j <= 6; j++)
@@ -223,6 +271,7 @@ public class BaseManger : MonoBehaviour
     #endregion
 
     #region 判断两点中是否有障碍物和棋子是否符合移动的条件
+
     /// <summary>
     /// 判断结束格子是否在可走格子内
     /// </summary>
@@ -310,8 +359,10 @@ public class BaseManger : MonoBehaviour
         ToEatBase(TwoClipOne(b));//二夹一
         ToEatBase(dachi(b));//打吃
 
-        WinOrLose();
-        WinOrLose02();
+        if (WinOrLose())
+        {
+            WinOrLose02();
+        }
     }
 
     /// <summary>
@@ -383,6 +434,7 @@ public class BaseManger : MonoBehaviour
                 lb.Add(temp02);
                 continue;
             }
+            Debug.Log("不会到这");
             samePathList.Remove(temp01);
             samePathList.Remove(temp02);
         }
@@ -427,16 +479,19 @@ public class BaseManger : MonoBehaviour
             item.BeEat();
         }
     }
+
     #endregion
 
     #region 输赢显示和判断  
+
     /// <summary>
     /// 展示输赢
     /// </summary>
     /// <param name="ps"></param>
     void ShowWin(PlayerState ps)
     {
-        Notification no = new Notification(PlayPanel.Instance.TotalTime);
+        Notification no = new Notification();
+        Debug.Log(PlayPanel.Instance.TotalTime);
         //TODO 人人对战的结局
         if (ps == PlayerState.Red)
         {
@@ -456,8 +511,8 @@ public class BaseManger : MonoBehaviour
             no.Str = "BlackWin";
         }
         EndGame();
-        NotificationManger.Instance.DispatchEvent(EventName.TotalTime, no);
         UIManger.Instance.PushPanel(UIName.EndPanel);
+        NotificationManger.Instance.DispatchEvent(EventName.TotalTime, no);
     }
 
     /// <summary>
@@ -467,7 +522,7 @@ public class BaseManger : MonoBehaviour
     bool WinOrLose()
     {
         List<Base> TempList = new List<Base>();
-        //遍历红色方
+        //遍历黑色方
         if (EndBase.Ps == PlayerState.Red)
         {
             foreach (var item in BlackList)
@@ -482,6 +537,7 @@ public class BaseManger : MonoBehaviour
                 }
             }
             //说明黑色的无路可走了
+            Debug.Log("qq");
             ShowWin(PlayerState.Red);
             return false;
         }
@@ -499,6 +555,7 @@ public class BaseManger : MonoBehaviour
                 }
             }
             //说明红色的无路可走了
+            Debug.Log("ww");
             ShowWin(PlayerState.Black);
             return false;
         }
@@ -507,7 +564,7 @@ public class BaseManger : MonoBehaviour
     }
 
     /// <summary>
-    /// 第二种输赢判断     看双方是否还剩棋子
+    /// 第二种输赢判断     看双方剩余棋子的数量
     /// </summary>
     /// <returns></returns>
     bool WinOrLose02()
@@ -519,17 +576,20 @@ public class BaseManger : MonoBehaviour
         }
         else if (BlackList.Count==0)
         {
+            Debug.Log("ee");
             ShowWin(PlayerState.Red);
             return false;
         }
         else if (BlackList.Count==1&&RedList.Count==1)
         {
-            //TODO 平局怎么算
+            Debug.Log("rr");
+            //TODO 平局算黑手赢
             ShowWin(PlayerState.Black);
             return false;
         }
         return true;
     }
+
     #endregion
 
     #region 获得特定格子的方法

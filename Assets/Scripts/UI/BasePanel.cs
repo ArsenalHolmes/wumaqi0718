@@ -24,6 +24,8 @@ public class BasePanel : MonoBehaviour
         transform.DOLocalMoveX(0, 0.5f);
         //设置UI层级
         transform.SetSiblingIndex(transform.parent.childCount - 2);
+        Sequence s = DOTween.Sequence();
+       
     }
     /// <summary>
     /// 出栈

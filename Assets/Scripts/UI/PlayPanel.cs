@@ -14,7 +14,7 @@ public class PlayPanel : BasePanel
     float Times;
     public float TotalTime;
 
-    bool isPlay;
+    public bool isPlay;
     private void Start()
     {
         Times = AppointTime;
@@ -35,7 +35,6 @@ public class PlayPanel : BasePanel
             }
             Times -= Time.deltaTime;
             ChangsTime(Times);
-            TotalTime += Time.deltaTime;
         }
     }
 
@@ -50,6 +49,7 @@ public class PlayPanel : BasePanel
         player1 = transform.Find("qipan/Player1").GetComponent<Image>();
         player2 = transform.Find("qipan/Player2").GetComponent<Image>();
     }
+
     void EventInit()
     {
         NotificationManger.Instance.AddEventListener(EventName.PlayerChang, ChangPlayer);
@@ -69,11 +69,10 @@ public class PlayPanel : BasePanel
     {
         PlayerPrefs.SetFloat("state", Time);
         Times = AppointTime;
-        TotalTime = 0;
         if (Time==1)
         {
-            player1.sprite = Resources.Load<Sprite>("Image/玩家");
-            player2.sprite = Resources.Load<Sprite>("Image/电脑");
+            player1.sprite = Resources.Load<Sprite>("Image/电脑");
+            player2.sprite = Resources.Load<Sprite>("Image/玩家");
             BaseManger.Instance.AIPlay += CompterAi.Instance.AIPlayChess;
         }
         else

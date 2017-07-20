@@ -124,6 +124,11 @@ public class Notification
         }
     }
 
+    public Notification()
+    {
+
+    }
+
     public Notification(string str)
     {
         this.Str = str;

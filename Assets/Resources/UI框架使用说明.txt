@@ -1,4 +1,4 @@
-1.ËùÓÐPanelÐèÒª¼ÓCanvasGroup×é¼þ
-2.BasePanel ÀïÃæÊÇ»ù´¡µÄÏÔÊ¾Òþ²Ø¿ª¹ØµÈ
-3.±àÐ´UIÃû³Æ¶ÔÓ¦µÄEnum
-4.Ê¹ÓÃÇ°ÓÃEXCEL ±àÐ´UI¼ÓÔØÂ·¾¶	µÚÒ»ÁÐÃû×Ö	µÚ¶þÁÐÎ»ÖÃ
+ï»¿1.æ‰€æœ‰Paneléœ€è¦åŠ CanvasGroupç»„ä»¶
+2.BasePanel é‡Œé¢æ˜¯åŸºç¡€çš„æ˜¾ç¤ºéšè—å¼€å…³ç­‰
+3.ç¼–å†™UIåç§°å¯¹åº”çš„Enum
+4.ä½¿ç”¨å‰ç”¨EXCEL ç¼–å†™UIåŠ è½½è·¯å¾„	ç¬¬ä¸€åˆ—åå­—	ç¬¬äºŒåˆ—ä½ç½®
