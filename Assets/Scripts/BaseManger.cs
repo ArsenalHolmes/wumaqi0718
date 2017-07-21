@@ -35,8 +35,6 @@ public class BaseManger : MonoBehaviour
 
     //平局咋算
     //缺少介绍的4个按钮动画和结束输赢的动画
-    //人人对战输赢结束场景    改变字体
-    //人机对战  电脑赢了出现什么场景  改变文字
 
     private void Awake()
     {

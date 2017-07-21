@@ -124,7 +124,6 @@ public class PlayPanel : BasePanel
             //AniChangs();
             timeKeep = 0;
             index++;
-            
         }
     }
     void AniChangs()
