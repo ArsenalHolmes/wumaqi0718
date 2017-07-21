@@ -10,6 +10,7 @@ public class EndPanel : BasePanel
     private void Awake()
     {
         UIInit();
+        EventInit();
     }
     
 
@@ -21,6 +22,15 @@ public class EndPanel : BasePanel
         ReturnPlay = transform.Find("RetrunPlay").GetComponent<Button>();
         ReturnPlay.onClick.AddListener(ReturnPlay_Btn_Event);
         WinImage = transform.Find("WinImage").GetComponent<Image>();
+    }
+    void EventInit()
+    {
+        NotificationManger.Instance.AddEventListener(EventName.WinImage, WinImageChang);
+    }
+
+    void WinImageChang(Notification no)
+    {
+        WinImage.sprite = Resources.Load<Sprite>("Image/" + no.Str);
     }
     void back_Btn_Event()
     {

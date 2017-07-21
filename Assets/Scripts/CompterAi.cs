@@ -19,7 +19,6 @@ public class CompterAi : MonoBehaviour
         MoveBase mbTemp;
         if (BaseManger.Instance.RedList.Count==1)
         {
-            Debug.Log("红色就剩一个了");
             mbTemp = GetMovePath(BaseManger.Instance.RedList[0], MBL);
         }
         else

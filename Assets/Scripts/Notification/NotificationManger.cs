@@ -6,7 +6,7 @@ public enum EventName
 {
     TimeChangs,//时间
     PromptChangs,//提醒
-    TotalTime,//总时间
+    WinImage,//总时间
     PlayerChang,//修改玩家
 }
 public class NotificationManger  {
